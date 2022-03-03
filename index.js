@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 // Sets up the Express App
 // =============================================================
 const app = express();
@@ -46,21 +47,29 @@ app.get("/api/fish", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  if (req.body.password === "hello") {
-    const token = jwt.sign(
-      {
-        username: "Timmy",
-        userId: 1
-      },
-      "i like turtles",
-      {
-        expiresIn: "2h"
-      }
-    );
-    res.json({ token: token });
-  } else {
-    return res.status(403).send("invalid credentials");
-  }
+    User.findOne({where:{email:req.body.email}}).then(dbUser=>{
+        if(!dbUser){
+            return res.status(403).send("invalid credentials")
+        } 
+        if (bcrypt.compareSync(req.body.password,dbUser.password)) {
+            const token = jwt.sign(
+              {
+                email: dbUser.email,
+                id: dbUser.id
+              },
+              process.env.JWT_SECRET,
+              {
+                expiresIn: "2h"
+              }
+            );
+            res.json({ token: token });
+          } else {
+            return res.status(403).send("invalid credentials");
+          }
+    }).catch(err=>{
+        console.log(err)
+        res.status(500).json({msg:"an error occured",err})
+    })
 });
 
 app.get("/secretclub", (req, res) => {
@@ -68,17 +77,17 @@ app.get("/secretclub", (req, res) => {
   const token = req.headers?.authorization?.split(" ").pop();
   console.log(token);
   //  res.json(req.headers);
-  jwt.verify(token, "i like turtles", (err, data) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
     if (err) {
       console.log(err);
       res.status(403).json({ msg: "invalid credentials", err });
     } else {
-      res.send(`welcome to the club, ${data.username}!`);
+      res.send(`welcome to the club, ${data.email}!`);
     }
   });
 });
 
-sequelize.sync({ force: true }).then(function() {
+sequelize.sync({ force: false }).then(function() {
   app.listen(PORT, function() {
     console.log("App listening on PORT " + PORT);
   });
