@@ -62,7 +62,10 @@ app.post("/login", (req, res) => {
                 expiresIn: "2h"
               }
             );
-            res.json({ token: token });
+            res.json({ 
+                token: token, 
+                user: dbUser
+            });
           } else {
             return res.status(403).send("invalid credentials");
           }
@@ -71,6 +74,7 @@ app.post("/login", (req, res) => {
         res.status(500).json({msg:"an error occured",err})
     })
 });
+
 
 app.get("/secretclub", (req, res) => {
   console.log(req.headers);
@@ -83,6 +87,22 @@ app.get("/secretclub", (req, res) => {
       res.status(403).json({ msg: "invalid credentials", err });
     } else {
       res.send(`welcome to the club, ${data.email}!`);
+    }
+  });
+});
+app.get("/gettokendata", (req, res) => {
+  console.log(req.headers);
+  const token = req.headers?.authorization?.split(" ").pop();
+  console.log(token);
+  //  res.json(req.headers);
+  jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
+    if (err) {
+      console.log(err);
+      res.status(403).json({ msg: "invalid credentials", err });
+    } else {
+      User.findByPk(data.id).then(userData=>{
+          res.json(userData);
+      })
     }
   });
 });
