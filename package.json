@@ -12,10 +12,9 @@
   "description": "",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "seed":"node seeds/seed.js"
+    "seed": "node seeds/seed.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +25,5 @@
   "bugs": {
     "url": "https://github.com/Rufasa85/joewts/issues"
   },
-  
   "homepage": "https://github.com/Rufasa85/joewts#readme"
 }

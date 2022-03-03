@@ -13,4 +13,13 @@ router.get("/",(req,res)=>{
     })
 })
 
+router.get("/:id",(req,res)=>{
+    Tank.findByPk(req.params.id,{include:[Fish]}).then(dbTank=>{
+        res.json(dbTank)
+    }).catch(err=>{
+        console.log(err);
+        res.status(500).json(err);
+    })
+})
+
 module.exports = router;
