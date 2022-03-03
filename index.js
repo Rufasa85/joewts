@@ -1,9 +1,11 @@
 const express = require("express");
 const jwt = require("jsonwebtoken")
+const cors = require("cors")
 // Sets up the Express App
 // =============================================================
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(cors())
+const PORT = process.env.PORT || 3001;
 // Requiring our models for syncing
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
@@ -11,9 +13,33 @@ app.use(express.json());
 
 
 // Static directory
+const fishes= [
+    {
+        id:1,
+        name:"Joe",
+        color:"#456abc",
+        width:100
+    },
+    {
+        id:2,
+        name:"Brett",
+        color:"#cabcab",
+        width:200
+    },
+    {
+        id:3,
+        name:"Frantz",
+        color:"#aef832",
+        width:150
+    }
+]
 
 app.get("/",(req,res)=>{
     res.send("hello")
+})
+
+app.get("/api/fish",(req,res)=>{
+    res.json(fishes)
 })
 
 app.post("/login",(req,res)=>{
