@@ -9,12 +9,12 @@ const allRoutes = require('./controllers');
 const sequelize = require("./config/connection");
 
 //LOCAL
-app.use(cors());
+// app.use(cors());
 
 //DEPLOYED
-// app.use(cors({
-//     origin
-// }))
+app.use(cors({
+    origin:["https://joes-fishies-front.herokuapp.com"]
+}))
 const PORT = process.env.PORT || 3001;
 // Requiring our models for syncing
 // Sets up the Express app to handle data parsing
